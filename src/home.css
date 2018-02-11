@@ -184,7 +184,7 @@ body{
 }
 
 .black-overlay {
-	display: none;
+	display: block;
 	position: absolute;
 	top: 0%;
 	left: 0%;
@@ -197,7 +197,7 @@ body{
 	filter: alpha(opacity=80);
 }
 .white-content-addtask {
-	display: none;
+	display: block;
 	position: absolute;
 	top: 28%;
 	left: 38%;
@@ -217,7 +217,7 @@ body{
 	text-align: center;
 }
 .white-content-edittask {
-	display: none;
+	display: block;
 	position: absolute;
 	top: 28%;
 	left: 38%;
