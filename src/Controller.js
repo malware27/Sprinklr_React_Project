@@ -1,5 +1,5 @@
 
-import {data,saveData,fetchData} from './Model';
+import {data,saveData} from './Model';
 
 function deleteTask(event) {
     let target = event.target;
@@ -28,7 +28,4 @@ function addTask(taskName,taskStatus,dueDate,userId) {
     return data;
 }
 
-function init() {
-    return fetchData();
-}
-export {deleteTask,addTask,init};
+export {deleteTask,addTask};
