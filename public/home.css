@@ -23,7 +23,9 @@ body{
 	line-height: 30px;
 	vertical-align: middle;
 	display: block;
+	cursor: pointer;
 }
+
 #users-page-link{
 	position: absolute;
 	top: 20%;
@@ -31,6 +33,7 @@ body{
 	background-color: white;
 	font-size:20px;
 }
+
 .userlists{
 	position: relative;
 	top:50px;

@@ -24,6 +24,7 @@ function dumbUsers() {
     let temp = {
         id: 1,
         name: 'User1',
+        role: 'Developer',
         tasklist: {
             "1-0": {
                 name: "blah",
@@ -44,6 +45,7 @@ function dumbUsers() {
     temp = {
         id: 2,
         name: 'User2',
+        role:'Developer',
         tasklist: {
             "2-0": {
                 name: "blah",

@@ -1,15 +1,20 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
+import {App} from './App';
 import registerServiceWorker from './registerServiceWorker';
 import {data, saveData,fetchData} from "./Model";
-
+import { BrowserRouter } from 'react-router-dom';
+import {Main} from "./Main";
 
 let controller = {
 
     init:function () {
-        ReactDOM.render(<App />, document.getElementById('root'));
+        ReactDOM.render(
+            <BrowserRouter>
+                <Main />
+            </BrowserRouter>,
+            document.getElementById('root'));
     },
     deleteTask: function(event) {
         let target = event.target;
@@ -57,6 +62,10 @@ let controller = {
         task.status = taskstatus;
         task.dueDate = duedate;
         saveData(userid,data[userid]);
+    },
+    removeUser(userID){
+        delete data[userID];
+        return data;
     }
 }
 

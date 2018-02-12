@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component, Fragment} from 'react';
 import './App.css';
 import {UserList} from "./UserList";
 import {AddTaskPopup,EditTaskPopup,BlackOverlay} from "./Popup";
@@ -78,25 +78,24 @@ class App extends Component {
     }
   render() {
     return (
-        <div>
-            <Header/>
+        <Fragment>
             <UserList addtask={this.handleAddTask} edittask={this.handleEditTask} userlist={this.state.userlist}/>
             {this.state.addTaskPopup}
             {this.state.editTaskPopup}
             {this.state.blackOverlay}
-        </div>
+        </Fragment>
     );
   }
 }
 
-function Header() {
+function Header(props) {
     return(
         <div id="header">
-            <div id="header-title">
-                Collab
+            <div id="header-title" onClick={()=>{window.location.href = "/"}}>
+                 Collab
             </div>
             <div id="users-page-link">
-                <a href="users.html">Users</a>
+                <a href="/team">Users</a>
             </div>
         </div>
     );
@@ -104,4 +103,4 @@ function Header() {
 
 
 
-export default App;
+export {App,Header};
