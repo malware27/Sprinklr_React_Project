@@ -76,31 +76,11 @@ class TaskList extends Component{
             tasklist:props.tasklist
         };
         this.onTaskDelete = this.onTaskDelete.bind(this);
-        this.allowdrop = this.allowdrop.bind(this);
-        this.drag = this.drag.bind(this);
-        this.drop = this.drop.bind(this);
     }
     onTaskDelete(event){
         let data = controller.deleteTask(event);
         this.setState({
             tasklist:data
-        });
-    }
-    allowdrop(event){
-        event.preventDefault();
-    }
-    drag(event){
-        event.dataTransfer.setData("text",event.target.id);
-    }
-    drop(event){
-        event.preventDefault();
-        let taskID = event.dataTransfer.getData("text");
-        taskID = taskID.substr(4);
-        let prevUserID = taskID.split("-")[0];
-        let newUserID = event.target.closest(".userlist-element").id.substr(4);
-        let data = controller.changeUserOfTask(taskID,prevUserID,newUserID);
-        this.setState({
-            userlist:data
         });
     }
     render() {

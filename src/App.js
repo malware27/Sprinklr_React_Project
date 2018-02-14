@@ -3,7 +3,6 @@ import './App.css';
 import {UserList} from "./UserList";
 import {AddTaskPopup,EditTaskPopup,BlackOverlay} from "./Popup";
 import {controller} from "./index";
-import {data} from "./Model";
 
 class App extends Component {
     constructor(){
@@ -58,6 +57,8 @@ class App extends Component {
         });
     }
     handleEditTask(event){
+        if(event.target.tagName==="IMG")
+            return;
         let taskid = event.currentTarget.id;
         this.setState({
             blackOverlay:<BlackOverlay/>,
@@ -73,13 +74,14 @@ class App extends Component {
         let newData = controller.addTask(taskName,taskStatus,dueDate,userId);
         this.setState({
             blackOverlay:false,
-            addTaskPopup:false
+            addTaskPopup:false,
+            userlist:newData
         });
     }
   render() {
     return (
         <Fragment>
-            <UserList addtask={this.handleAddTask} edittask={this.handleEditTask} userlist={this.state.userlist}/>
+            <UserList addtask={this.handleAddTask} edittask={this.handleEditTask} userlist={this.state.userlist} />
             {this.state.addTaskPopup}
             {this.state.editTaskPopup}
             {this.state.blackOverlay}
