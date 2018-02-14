@@ -27,9 +27,10 @@ function AddTaskPopup(props) {
 }
 
 function EditTaskPopup(props) {
-    let taskid = props.taskid.substr(4);
-    let userid = taskid.split("-")[0];
-    let taskdata = data[userid].tasklist[taskid];
+    let taskid = props.taskid;
+    let userid = data.tasks.byid[taskid].assignedUserId;
+    let taskdata = data.tasks.byid[taskid];
+    console.log(taskdata);
     return(
         <div id="edittask-form-popup" className="white-content-edittask">
             <div className="popup-header">Edit Task</div>
@@ -58,7 +59,7 @@ function EditTaskPopup(props) {
 }
 
 function AssignedUserDropDown(props) {
-    let userdata=data;
+    let userdata=data.users.byid;
     let options=[];
     for(let i in userdata){
         if(i==props.userid) {

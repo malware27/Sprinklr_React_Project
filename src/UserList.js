@@ -1,5 +1,7 @@
-import React, {Component} from "react";
+import React, {Component, Fragment} from "react";
 import {controller} from "./index";
+import {BlackOverlay,AddTaskPopup,EditTaskPopup} from "./Popup";
+import {data} from "./Model";
 
 class User extends Component{
 
@@ -73,7 +75,7 @@ class TaskList extends Component{
     {
         super(props);
         this.state={
-            tasklist:props.tasklist
+            tasklist:props.tasklist,
         };
         this.onTaskDelete = this.onTaskDelete.bind(this);
     }
@@ -86,10 +88,11 @@ class TaskList extends Component{
     render() {
         let tasks = this.props.tasklist;
         let taskComponents = [];
-        for (let i in tasks) {
-            if(this.props.filtertask['All'] || this.props.filtertask[tasks[i].status]) {
-                taskComponents.push(<Task name={tasks[i].name} id={tasks[i].id} drag={this.props.drag}
-                                          status={tasks[i].status} dueDate={tasks[i].dueDate} key={tasks[i].id}
+        for (let i=0;i<tasks.length;i++) {
+            let task = data.tasks.byid[tasks[i]];
+            if(this.props.filtertask['All'] || this.props.filtertask[task.status]) {
+                taskComponents.push(<Task name={task.name} id={tasks[i]} drag={this.props.drag}
+                                          status={task.status} dueDate={task.dueDate} key={tasks[i]}
                                           onDelete={this.onTaskDelete} edittask={this.props.edittask}/>);
             }
         }
@@ -101,14 +104,24 @@ class TaskList extends Component{
     }
 }
 class UserList extends Component{
-    constructor(props){
-        super(props);
+    constructor(){
+        super();
+        console.log(controller.getData());
         this.state = {
-            userlist:props.userlist
+            userlist:controller.getData(),
+            blackOverlay:false,
+            addTaskPopup:false,
+            editTaskPopup:false
         };
         this.allowdrop = this.allowdrop.bind(this);
         this.drag = this.drag.bind(this);
         this.drop = this.drop.bind(this);
+        this.handleAddTask = this.handleAddTask.bind(this);
+        this.submitAddTask = this.submitAddTask.bind(this);
+        this.retrieveAddTaskData = this.retrieveAddTaskData.bind(this);
+        this.cancelPopup = this.cancelPopup.bind(this);
+        this.handleEditTask = this.handleEditTask.bind(this);
+        this.submitEditTask = this.submitEditTask.bind(this);
     }
     allowdrop(event){
         event.preventDefault();
@@ -120,25 +133,88 @@ class UserList extends Component{
         event.preventDefault();
         let taskID = event.dataTransfer.getData("text");
         taskID = taskID.substr(4);
-        let prevUserID = taskID.split("-")[0];
+        let prevUserID = this.state.userlist.tasks.byid[taskID].assignedUserId;
         let newUserID = event.target.closest(".userlist-element").id.substr(4);
         let data = controller.changeUserOfTask(taskID,prevUserID,newUserID);
         this.setState({
             userlist:data
         });
     }
+    handleAddTask(event){
+        let userid = event.target.parentNode.id.substr(4);
+        this.setState({
+            blackOverlay: <BlackOverlay/>,
+            addTaskPopup: <AddTaskPopup submittask={this.submitAddTask} userid={userid} cancel={this.cancelPopup}/>
+        })
+    }
+    submitAddTask(event){
+        event.preventDefault();
+        this.retrieveAddTaskData(event);
+    }
+    cancelPopup(event){
+        this.setState({
+            blackOverlay:false,
+            editTaskPopup:false,
+            addTaskPopup:false
+        });
+    }
+    submitEditTask(event){
+        event.preventDefault();
+        let taskid = document.getElementById("submit_button").dataset.taskid;
+        let prevUserid = this.state.userlist.tasks.byid[taskid].assignedUserId;
+        let taskname = document.getElementById("edit-task-name").value;
+        let taskstatus = document.getElementById("edit-task-status").value;
+        let duedate = document.getElementById("due-date").value;
+        controller.changeTaskData(taskname,taskstatus,duedate,prevUserid,taskid);
+        let newUserID = document.getElementById("assigned-user");
+        newUserID = newUserID.options[newUserID.selectedIndex].value;
+        if(prevUserid!=newUserID)
+            controller.changeUserOfTask(taskid,prevUserid,newUserID);
+        this.setState({
+            userlist:controller.getData(),
+            blackOverlay:false,
+            editTaskPopup:false
+        });
+    }
+    handleEditTask(event){
+        if(event.target.tagName==="IMG")
+            return;
+        let taskid = event.currentTarget.id.substr(4);
+        this.setState({
+            blackOverlay:<BlackOverlay/>,
+            editTaskPopup:<EditTaskPopup cancel={this.cancelPopup} submit={this.submitEditTask} taskid={taskid}/>
+        });
+    }
+    retrieveAddTaskData(event){
+        let taskName = document.getElementById("task-name").value;
+        let taskStatus = document.getElementById("task-status");
+        taskStatus = taskStatus.options[taskStatus.selectedIndex].value;
+        let dueDate = document.getElementById("duedate").value;
+        let userId = document.getElementById("submit-button").dataset.userid;
+        let newData = controller.addTask(taskName,taskStatus,dueDate,userId);
+        this.setState({
+            blackOverlay:false,
+            addTaskPopup:false,
+            userlist:newData
+        });
+    }
     render() {
-        let userList = this.state.userlist;
+        let userList = this.state.userlist.users.byid;
         let usersComponents = [];
         for (let i in userList) {
-            usersComponents.push(<User userid={userList[i].id} userName={userList[i].name} drag={this.drag}
-                                       key={userList[i].id} tasklist={userList[i].tasklist} allowdrop = {this.allowdrop}
-                                        addtask={this.props.addtask} drop={this.drop} edittask={this.props.edittask}/>);
+            usersComponents.push(<User userid={i} userName={userList[i].name} drag={this.drag}
+                                       key={i} tasklist={userList[i].taskIds} allowdrop = {this.allowdrop}
+                                        addtask={this.handleAddTask} drop={this.drop} edittask={this.handleEditTask}/>);
         }
         return (
-            <div className="userlists" id="userlists">
-                {usersComponents}
-            </div>
+            <Fragment>
+                <div className="userlists" id="userlists">
+                    {usersComponents}
+                </div>
+                {this.state.blackOverlay}
+                {this.state.addTaskPopup}
+                {this.state.editTaskPopup}
+            </Fragment>
         );
     }
 }
