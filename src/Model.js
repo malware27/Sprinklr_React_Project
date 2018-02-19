@@ -3,7 +3,11 @@
 }
 
 function fetchData() {
-    return data;
+    return new Promise(function (resolve) {
+       const randomTime = (Math.random()+5)*1000;
+       setTimeout(()=> resolve(data)
+       ,randomTime);
+    });
 }
 
 function fetchUsers() {

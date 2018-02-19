@@ -28,7 +28,7 @@ class MembersList extends Component{
     constructor(){
         super();
         this.state={
-            userlist:controller.getData(),
+            userlist:"loading",
             popup:false
         }
         this.deleteUser = this.deleteUser.bind(this);
@@ -37,6 +37,15 @@ class MembersList extends Component{
         this.handleSubmitAddUser = this.handleSubmitAddUser.bind(this);
         this.editUser = this.editUser.bind(this);
         this.handleSubmitEditUser = this.handleSubmitEditUser.bind(this);
+    }
+    componentWillMount(){
+        let data = controller.getData();
+        data.then(result => this.setData(result));
+    }
+    setData(result){
+        this.setState({
+            userlist:result
+        });
     }
     deleteUser(event){
         let userId = event.target.closest(".memberelement").id.substr(4);
@@ -93,6 +102,14 @@ class MembersList extends Component{
         });
     }
     render(){
+        if(this.state.userlist === "loading"){
+            return(
+                <div>
+                    <img style={{position:"absolute",top:"43%",left:"47%"}} src="images/source1.gif"
+                         width="100px" height="100px"/>
+                </div>
+            );
+        }
         let membersDiv = [];
         let usersdata = this.state.userlist.users.byid;
         for(let i in usersdata){

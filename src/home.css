@@ -231,3 +231,7 @@ body{
 	overflow: auto;
 	line-height: 24px;
 }
+.loading_spinner{
+	position: absolute;
+
+}

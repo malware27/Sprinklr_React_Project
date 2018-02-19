@@ -106,9 +106,8 @@ class TaskList extends Component{
 class UserList extends Component{
     constructor(){
         super();
-        console.log(controller.getData());
         this.state = {
-            userlist:controller.getData(),
+            userlist:"loading",
             blackOverlay:false,
             addTaskPopup:false,
             editTaskPopup:false
@@ -122,6 +121,15 @@ class UserList extends Component{
         this.cancelPopup = this.cancelPopup.bind(this);
         this.handleEditTask = this.handleEditTask.bind(this);
         this.submitEditTask = this.submitEditTask.bind(this);
+    }
+    componentDidMount(){
+        let data = controller.getData();
+        data.then(result => this.setData(result));
+    }
+    setData(result){
+        this.setState({
+            userlist:result
+        });
     }
     allowdrop(event){
         event.preventDefault();
@@ -199,6 +207,14 @@ class UserList extends Component{
         });
     }
     render() {
+        if(this.state.userlist === "loading"){
+            return(
+                <div>
+                    <img style={{position:"absolute",top:"43%",left:"47%"}} src="images/source1.gif"
+                         width="100px" height="100px"/>
+                </div>
+            );
+        }
         let userList = this.state.userlist.users.byid;
         let usersComponents = [];
         for (let i in userList) {
